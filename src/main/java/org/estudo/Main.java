@@ -1,6 +1,6 @@
 package org.estudo;
 
-import dao.PetDAO;
+import org.estudo.dao.PetDAO;
 import org.estudo.ui.Menu;
 
 import java.sql.SQLException;
@@ -34,7 +34,13 @@ public class Main {
                         System.out.println(e.getMessage());
                     }
                 }
-                case 2 -> System.out.println(" ");
+                case 2 -> {
+                    try {
+                        Menu.listAllPets(petDAO.listFilteredPets(Menu.petsFiltradosMenu()));
+                    } catch (SQLException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
                 case 3 -> System.out.println(" ");
                 case 4 -> System.out.println(" ");
                 case 5 -> System.out.println(" ");

@@ -81,7 +81,7 @@ public class Menu {
 
     public static void listAllPets(ResultSet pets) throws SQLException {
 
-        List<Pet> allPets = new ArrayList<Pet>();
+        List<Pet> allPets = new ArrayList<>();
 
         while (pets.next()) {
             String nome = pets.getString("nome");
@@ -126,5 +126,19 @@ public class Menu {
         });
 
         System.out.println("════════════════════════════════════════════");
+    }
+
+    public static List<String> petsFiltradosMenu() {
+        System.out.println("======================================");
+        System.out.println("         FILTRAR PETS                 ");
+        System.out.println("======================================");
+        System.out.print("INFORME AS PALAVRAS CHAVES (SEPARADAS POR ESPAÇO): ");
+
+        List<String> filtros = new ArrayList<>();
+        String keyWords = input.nextLine();
+        for (String p: keyWords.split((" "))){
+            filtros.add(p);
+        }
+        return filtros;
     }
 }
