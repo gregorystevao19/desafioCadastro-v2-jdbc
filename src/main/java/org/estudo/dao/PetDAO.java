@@ -66,7 +66,6 @@ public class PetDAO {
                             )
                         """);
             }
-
             sql.append(String.join(" AND ", conditions));
         }
 
