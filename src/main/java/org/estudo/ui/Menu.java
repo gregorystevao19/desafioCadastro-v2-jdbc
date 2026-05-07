@@ -1,5 +1,7 @@
 package org.estudo.ui;
 
+import org.estudo.dao.PerguntaDAO;
+import org.estudo.dao.PetDAO;
 import org.estudo.domain.*;
 
 import java.sql.ResultSet;
@@ -136,9 +138,149 @@ public class Menu {
 
         List<String> filtros = new ArrayList<>();
         String keyWords = input.nextLine();
-        for (String p: keyWords.split((" "))){
+        for (String p : keyWords.split((" "))) {
             filtros.add(p);
         }
         return filtros;
     }
+
+    public static void handlePetCadastro(ResultSet perguntas) throws SQLException {
+        List<Pergunta> allPerguntas = new ArrayList<>();
+
+        while (perguntas.next()) {
+            String descricao = perguntas.getString("descricao");
+            boolean isEditavel = perguntas.getBoolean("editavel");
+
+            Pergunta p = new Pergunta(descricao, isEditavel);
+            allPerguntas.add(p);
+        }
+
+        Pet p = new Pet();
+        for (int contador = 1; contador <= allPerguntas.size(); contador++) {
+
+            System.out.print(allPerguntas.get(contador - 1).getDescricao() + ": ");
+            switch (contador) {
+                case 1 -> {
+                    String nome = input.nextLine();
+                    if (nome.isEmpty()) {
+                        p.setNome(null);
+                    } else {
+                        while (nome.split(" ").length != 2) {
+                            System.out.print("O NOME DEVE CONTER NOME E SOBRENOME DO PET, SEPARADOS POR ESPAÇO: ");
+                            nome = input.nextLine();
+                        }
+                        NomePet n = new NomePet(nome.split(" ")[0], nome.split(" ")[1]);
+                        p.setNome(n);
+                    }
+                }
+                case 2 -> {
+                    String tipo = input.nextLine();
+                    while (true) {
+                        try {
+                            TipoPet tipoPet = TipoPet.valueOf(tipo.toUpperCase());
+                            break;
+
+                        } catch (IllegalArgumentException e) {
+                            System.out.print("INFORME UM TIPO DE PET VÁLIDO (CACHORRO / GATO): ");
+                            tipo = input.nextLine();
+                        }
+                    }
+                    p.setTipo(TipoPet.valueOf(tipo.toUpperCase()));
+                }
+                case 3 -> {
+                    String sexo = input.nextLine();
+                    while (true) {
+                        try {
+                            SexoPet sexoPet = SexoPet.valueOf(sexo.toUpperCase());
+                            break;
+
+                        } catch (IllegalArgumentException e) {
+                            System.out.print("INFORME UM SEXO VÁLIDO (MACHO / FEMEA): ");
+                            sexo = input.nextLine();
+                        }
+                    }
+                    p.setSexo(SexoPet.valueOf(sexo.toUpperCase()));
+                }
+                case 4 -> {
+                    System.out.print("\nCIDADE: ");
+                    String cidade = input.nextLine();
+
+                    System.out.print("BAIRRO: ");
+                    String bairro = input.nextLine();
+
+                    System.out.print("NUMERO DA CASA: ");
+                    String numero = input.nextLine();
+                    if(numero.isEmpty()) numero = "0";
+
+                    int numeroNumeric;
+
+                    while (true) {
+                        try {
+                            numeroNumeric = Integer.parseInt(numero);
+                            if (numeroNumeric < 0) throw new IllegalArgumentException();
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.print("POR FAVOR, INFORME UM NÚMERO VÁLIDO: ");
+                            numero = input.nextLine();
+                        } catch (IllegalArgumentException e) {
+                            System.out.print("POR FAVOR, INFORME UM NÚMERO VÁLIDO: ");
+                            numero = input.nextLine();
+                        }
+                    }
+
+                    Endereco e = new Endereco(cidade, bairro, numeroNumeric);
+                    p.setEndereco(e);
+                }
+                case 5 -> {
+                    String idade = input.nextLine();
+                    if(idade.isEmpty()) idade = "0";
+
+                    double idadeNumeric;
+                    while (true) {
+                        try {
+                            idadeNumeric = Double.parseDouble(idade.replace(",", "."));
+                            if (idadeNumeric < 0) throw new IllegalArgumentException();
+
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.print("POR FAVOR, INFORME UM NÚMERO VÁLIDO: ");
+                            idade = input.nextLine();
+                        } catch (IllegalArgumentException e) {
+                            System.out.print("POR FAVOR, INFORME UM NÚMERO VÁLIDO: ");
+                            idade = input.nextLine();
+                        }
+                    }
+                    p.setIdade(idadeNumeric);
+                }
+                case 6 -> {
+                    String peso = input.nextLine();
+                    if(peso.isEmpty()) peso = "0";
+
+                    double pesoNumeric;
+                    while (true) {
+                        try {
+                            pesoNumeric = Double.parseDouble(peso.replace(",", "."));
+                            if (pesoNumeric < 0) throw new IllegalArgumentException();
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.print("POR FAVOR, INFORME UM NÚMERO VÁLIDO: ");
+                            peso = input.nextLine();
+                        } catch (IllegalArgumentException e) {
+                            System.out.print("POR FAVOR, INFORME UM NÚMERO VÁLIDO: ");
+                            peso = input.nextLine();
+                        }
+                    }
+                    p.setPeso(pesoNumeric);
+                }
+                case 7 -> {
+                    String raca = input.nextLine();
+                    if(raca.isEmpty()) raca = null;
+                    p.setRaca(raca);
+                }
+            }
+        }
+        PetDAO petDAO = new PetDAO();
+        petDAO.save(p);
+    }
+
 }

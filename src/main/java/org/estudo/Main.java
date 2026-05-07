@@ -1,5 +1,6 @@
 package org.estudo;
 
+import org.estudo.dao.PerguntaDAO;
 import org.estudo.dao.PetDAO;
 import org.estudo.ui.Menu;
 
@@ -23,6 +24,8 @@ public class Main {
 
     public static void gerenciarPetMenu() {
         PetDAO petDAO = new PetDAO();
+        PerguntaDAO perguntaDAO = new PerguntaDAO();
+
         while (true) {
             Menu.gerenciarPetMenu();
             int userInputGerenciarPetMenu = Menu.handleUserGerenciarPetMenuInput();
@@ -41,7 +44,13 @@ public class Main {
                         System.out.println(e.getMessage());
                     }
                 }
-                case 3 -> System.out.println(" ");
+                case 3 -> {
+                    try {
+                        Menu.handlePetCadastro(perguntaDAO.listAllPerguntas());
+                    } catch (SQLException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
                 case 4 -> System.out.println(" ");
                 case 5 -> System.out.println(" ");
                 case 6 -> start();

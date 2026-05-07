@@ -9,6 +9,10 @@ public class Pet {
     private double peso;
     private String raca;
 
+    public Pet(){
+
+    }
+
     public Pet(NomePet nome, TipoPet tipo, SexoPet sexo, Endereco endereco, double idade, double peso, String raca) {
         this.nome = nome;
         this.tipo = tipo;

@@ -13,10 +13,10 @@ import java.util.List;
 public class PetDAO {
 
     public void save(Pet pet) {
-        final String SQL = "INSERT INTO pet(nome, tipo, sexo, endereco, idade, peso, raca) VALUES(?, ?, ?, ?, ?, ?, ?, )";
+        final String SQL = "INSERT INTO pet(nome, tipo, sexo, endereco, idade, peso, raca) VALUES(?, ?, ?, ?, ?, ?, ?)";
         try (Connection c = DbConnection.openConnection()) {
             PreparedStatement s = c.prepareStatement(SQL);
-            s.setString(1, pet.getNome().getPrimeiroNome() + " " + pet.getNome().getSobrenome());
+            s.setString(1, pet.getNome() != null ? pet.getNome().getPrimeiroNome() + " " + pet.getNome().getSobrenome() : null);
             s.setString(2, pet.getTipo().toString());
             s.setString(3, pet.getSexo().toString());
             s.setString(4, pet.getEndereco().getCidade() + ", " + pet.getEndereco().getRua() + ", " + pet.getEndereco().getNumeroCasa());
@@ -24,7 +24,7 @@ public class PetDAO {
             s.setDouble(6, pet.getPeso());
             s.setString(7, pet.getRaca());
 
-            if (s.executeUpdate(SQL) > 0) {
+            if (s.executeUpdate() > 0) {
                 System.out.println("PET SALVO COM SUCESSO");
             } else {
                 System.out.println("ERRO AO SALVAR O PET NO BANCO DE DADOS");

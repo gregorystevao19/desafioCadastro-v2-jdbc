@@ -13,3 +13,12 @@ VALUES
     ('Toby Souza', 'CACHORRO', 'MACHO', 'Florianópolis, Rua Bocaiúva, 412', 3, 9.4, 'Shih Tzu'),
     ('Mia Barbosa', 'GATO', 'FEMEA', 'Campinas, Rua Conceição, 144', 4, 4.0, 'Sphynx'),
     ('Zeus Carvalho', 'CACHORRO', 'MACHO', 'Goiânia, Avenida Goiás, 650', 5, 35.2, 'Pastor Alemão');
+
+INSERT INTO pergunta (descricao) VALUES
+     ('Qual o nome e sobrenome do pet?'),
+     ('Qual o tipo do pet (Cachorro/Gato)?'),
+     ('Qual o sexo do animal?'),
+     ('Qual endereço e bairro que ele foi encontrado?'),
+     ('Qual a idade aproximada do pet?'),
+     ('Qual o peso aproximado do pet?'),
+     ('Qual a raça do pet?');
