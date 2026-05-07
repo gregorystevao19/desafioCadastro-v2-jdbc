@@ -1,3 +1,61 @@
+# Como executar o projeto
+
+## Pré-requisitos
+
+Antes de rodar o projeto, é necessário ter instalado:
+
+* Docker
+
+## 1. Baixar a imagem do PostgreSQL
+
+Execute:
+
+```bash
+docker pull postgres
+```
+
+## 2. Subir o banco de dados com Docker Compose
+
+Na raiz do projeto, execute:
+
+```bash
+docker compose up
+```
+
+Ou para rodar em background:
+
+```bash
+docker compose up -d
+```
+
+## 3. Criar a estrutura do banco
+
+Após o banco iniciar, execute o script SQL de schema para criação das tabelas:
+
+```sql
+schema.sql
+```
+
+## 4. Popular o banco com dados iniciais
+
+Depois execute o script de seed:
+
+```sql
+seed.sql
+```
+
+## 5. Rodar a aplicação
+
+Com o banco configurado e populado, execute a aplicação normalmente pela IDE ou via terminal.
+
+---
+
+# README original do desafio
+
+<!-- conteúdo original abaixo -->
+
+
+
 # Desafio PROGRAMAÇÃO - Sistema de Cadastros 🚀
 
 ### Desafio criado por Lucas Carrilho - [@devmagro](https://www.linkedin.com/in/karilho/)
