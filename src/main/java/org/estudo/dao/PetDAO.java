@@ -82,10 +82,44 @@ public class PetDAO {
             }
 
             return stmt.executeQuery();
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
+        }
+    }
+
+    public ResultSet listPetById(int id) {
+        final String SQL = "SELECT * FROM pet WHERE id = ?";
+        try (Connection c = DbConnection.openConnection()) {
+            PreparedStatement s = c.prepareStatement(SQL);
+            s.setInt(1, id);
+            return s.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public void updatePet(Pet pet) {
+        final String SQL = "UPDATE pet SET nome = ?, tipo = ?, sexo = ?, endereco = ?, idade = ?, peso = ?, raca = ? WHERE id = ?";
+        try (Connection c = DbConnection.openConnection()) {
+            PreparedStatement s = c.prepareStatement(SQL);
+            s.setString(1, pet.getNome() != null ? pet.getNome().getPrimeiroNome() + " " + pet.getNome().getSobrenome() : null);
+            s.setString(2, pet.getTipo().toString());
+            s.setString(3, pet.getSexo().toString());
+            s.setString(4, pet.getEndereco().getCidade() + ", " + pet.getEndereco().getRua() + ", " + pet.getEndereco().getNumeroCasa());
+            s.setDouble(5, pet.getIdade());
+            s.setDouble(6, pet.getPeso());
+            s.setString(7, pet.getRaca());
+            s.setInt(8, pet.getId());
+
+            if (s.executeUpdate() > 0) {
+                System.out.println("PET SALVO COM SUCESSO");
+            } else {
+                System.out.println("ERRO AO SALVAR O PET NO BANCO DE DADOS");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

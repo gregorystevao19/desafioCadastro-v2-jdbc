@@ -1,6 +1,7 @@
 package org.estudo.domain;
 
 public class Pet {
+    private int id;
     private NomePet nome;
     private TipoPet tipo;
     private SexoPet sexo;
@@ -21,6 +22,25 @@ public class Pet {
         this.idade = idade;
         this.peso = peso;
         this.raca = raca;
+    }
+
+    public Pet(int id, NomePet nome, TipoPet tipo, SexoPet sexo, Endereco endereco, double idade, double peso, String raca) {
+        this.id = id;
+        this.nome = nome;
+        this.tipo = tipo;
+        this.sexo = sexo;
+        this.endereco = endereco;
+        this.idade = idade;
+        this.peso = peso;
+        this.raca = raca;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public NomePet getNome() {

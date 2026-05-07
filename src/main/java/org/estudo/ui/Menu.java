@@ -86,6 +86,7 @@ public class Menu {
         List<Pet> allPets = new ArrayList<>();
 
         while (pets.next()) {
+            int id = pets.getInt("id");
             String nome = pets.getString("nome");
             String tipo = pets.getString("tipo");
             String sexo = pets.getString("sexo");
@@ -97,7 +98,7 @@ public class Menu {
             NomePet n = new NomePet(nome.split(" ")[0], nome.split(" ")[1]);
             Endereco en = new Endereco(endereco.split(", ")[0], endereco.split(", ")[1], Integer.parseInt(endereco.split(", ")[2]));
 
-            Pet p = new Pet(n, TipoPet.valueOf(tipo), SexoPet.valueOf(sexo), en, idade, peso, raca);
+            Pet p = new Pet(id, n, TipoPet.valueOf(tipo), SexoPet.valueOf(sexo), en, idade, peso, raca);
             allPets.add(p);
         }
 
@@ -107,6 +108,7 @@ public class Menu {
 
         allPets.forEach(p -> {
             System.out.println("┌──────────────────────────────────────────┐");
+            System.out.printf(" ID DO PET NA LISTAGEM: [%d]%n", p.getId());
             System.out.printf(" Nome: %s %s%n",
                     p.getNome().getPrimeiroNome(),
                     p.getNome().getSobrenome());
@@ -162,7 +164,7 @@ public class Menu {
             switch (contador) {
                 case 1 -> {
                     String nome = input.nextLine();
-                    if (nome.isEmpty()) {
+                    if (nome.trim().isEmpty()) {
                         p.setNome(null);
                     } else {
                         while (nome.split(" ").length != 2) {
@@ -210,7 +212,7 @@ public class Menu {
 
                     System.out.print("NUMERO DA CASA: ");
                     String numero = input.nextLine();
-                    if(numero.isEmpty()) numero = "0";
+                    if (numero.trim().isEmpty()) numero = "0";
 
                     int numeroNumeric;
 
@@ -233,7 +235,7 @@ public class Menu {
                 }
                 case 5 -> {
                     String idade = input.nextLine();
-                    if(idade.isEmpty()) idade = "0";
+                    if (idade.trim().isEmpty()) idade = "0";
 
                     double idadeNumeric;
                     while (true) {
@@ -254,7 +256,7 @@ public class Menu {
                 }
                 case 6 -> {
                     String peso = input.nextLine();
-                    if(peso.isEmpty()) peso = "0";
+                    if (peso.trim().isEmpty()) peso = "0";
 
                     double pesoNumeric;
                     while (true) {
@@ -274,13 +276,209 @@ public class Menu {
                 }
                 case 7 -> {
                     String raca = input.nextLine();
-                    if(raca.isEmpty()) raca = null;
+                    if (raca.trim().isEmpty()) raca = null;
                     p.setRaca(raca);
                 }
             }
         }
         PetDAO petDAO = new PetDAO();
         petDAO.save(p);
+    }
+
+    public static void handleEditarPet() throws SQLException {
+        PetDAO petDAO = new PetDAO();
+        ResultSet resultFilter = petDAO.listFilteredPets(petsFiltradosMenu());
+        listAllPets(resultFilter);
+
+        System.out.print("INFORME O ID DO PET QUE DESEJA EDITAR: ");
+        String userInput = input.nextLine();
+        int userInputNumeric;
+
+        while (true) {
+            try {
+                userInputNumeric = Integer.parseInt(userInput);
+                break;
+            } catch (NumberFormatException e) {
+                System.out.print("INFORME UM NÚMERO VÁLIDO: ");
+                userInput = input.nextLine();
+            }
+        }
+
+        ResultSet petById = petDAO.listPetById(userInputNumeric);
+        Pet p = new Pet();
+        while (petById.next()) {
+            int id = petById.getInt("id");
+            p.setId(id);
+            String nome = petById.getString("nome");
+            String tipo = petById.getString("tipo");
+            String sexo = petById.getString("sexo");
+            String endereco = petById.getString("endereco");
+            double idade = petById.getDouble("idade");
+            double peso = petById.getDouble("peso");
+            String raca = petById.getString("raca");
+
+            String novoNome;
+            String novoTipo;
+            String novoSexo;
+            String novaCidade;
+            String novoBairro;
+            String novoNumero;
+            String novaIdade;
+            String novoPeso;
+            String novaRaca;
+
+
+            System.out.println("INFORME OS NOVOS VALORES DOS CAMPOS QUE DESEJA ALTERAR, CASO QUEIRA MANTER O VALOR ORIGINAL BASTA ENVIAR UM VALOR VAZIO.");
+
+            System.out.printf("NOME ATUAL: %s | NOVO VALOR: ", nome);
+            novoNome = input.nextLine();
+            while (true) {
+                if (novoNome.trim().isEmpty()) {
+                    NomePet n = new NomePet(nome.split(" ")[0], nome.split(" ")[1]);
+                    p.setNome(n);
+                    break;
+                } else if (novoNome.split(" ").length != 2) {
+                    System.out.println("FORMATO DE NOME INVÁLIDO, DEVE SER NOME E SOBRENOME SEPARADOS POR ESPAÇO VAZIO. INFORME NOVAMENTE: ");
+                    novoNome = input.nextLine();
+                    continue;
+                } else {
+                    NomePet n = new NomePet(novoNome.split(" ")[0], novoNome.split(" ")[1]);
+                    p.setNome(n);
+                    break;
+                }
+            }
+
+            System.out.printf("TIPO ATUAL: %s | NOVO VALOR: ", tipo);
+            novoTipo = input.nextLine();
+            while (true) {
+                try {
+                    if (novoTipo.trim().isEmpty()) {
+                        TipoPet tipoPet = TipoPet.valueOf(tipo.toUpperCase());
+                        p.setTipo(tipoPet);
+                        break;
+
+                    } else {
+                        TipoPet tipoPet = TipoPet.valueOf(novoTipo.toUpperCase());
+                        p.setTipo(tipoPet);
+                        break;
+                    }
+
+                } catch (IllegalArgumentException e) {
+                    System.out.print("INFORME UM TIPO DE PET VÁLIDO (CACHORRO / GATO): ");
+                    novoTipo = input.nextLine();
+                }
+            }
+
+            System.out.printf("SEXO ATUAL: %s | NOVO VALOR: ", sexo);
+            novoSexo = input.nextLine();
+            while (true) {
+                try {
+                    if (novoSexo.trim().isEmpty()) {
+                        SexoPet sexoPet = SexoPet.valueOf(sexo.toUpperCase());
+                        p.setSexo(sexoPet);
+                        break;
+
+                    } else {
+                        SexoPet sexoPet = SexoPet.valueOf(novoSexo.toUpperCase());
+                        p.setSexo(sexoPet);
+                        break;
+                    }
+
+                } catch (IllegalArgumentException e) {
+                    System.out.print("INFORME UM SEXO DE PET VÁLIDO (MACHO / FEMEA): ");
+                    novoSexo = input.nextLine();
+                }
+            }
+
+            System.out.printf("ENDEREÇO ATUAL: %s | NOVO VALOR: ", endereco);
+            System.out.print("\nCIDADE: ");
+            novaCidade = input.nextLine();
+            System.out.print("BAIRRO: ");
+            novoBairro = input.nextLine();
+            System.out.print("NUMERO: ");
+            novoNumero = input.nextLine();
+            int novoNumeroNumeric;
+
+            while (true) {
+                if (novaCidade.trim().isEmpty()) novaCidade = endereco.split(", ")[0];
+                if (novoBairro.trim().isEmpty()) novoBairro = endereco.split(", ")[1];
+                if (novoNumero.trim().isEmpty()) novoNumero = endereco.split(", ")[2];
+
+                while (true) {
+                    try {
+                        novoNumeroNumeric = Integer.parseInt(novoNumero);
+                        if (novoNumeroNumeric < 0) throw new IllegalArgumentException();
+                        break;
+                    } catch (NumberFormatException e) {
+                        System.out.print("POR FAVOR, INFORME UM NÚMERO VÁLIDO: ");
+                        novoNumero = input.nextLine();
+                    } catch (IllegalArgumentException e) {
+                        System.out.print("POR FAVOR, INFORME UM NÚMERO VÁLIDO: ");
+                        novoNumero = input.nextLine();
+                    }
+                }
+
+                Endereco e = new Endereco(novaCidade, novoBairro, novoNumeroNumeric);
+                p.setEndereco(e);
+                break;
+            }
+
+            System.out.printf("IDADE ATUAL: %s | NOVO VALOR: ", idade);
+            novaIdade = input.nextLine();
+            double novaIdadeNumeric;
+            if (novaIdade.trim().isEmpty()) {
+                p.setIdade(idade);
+
+            } else {
+                while (true) {
+                    try {
+                        novaIdadeNumeric = Double.parseDouble(novaIdade.replace(",", "."));
+                        if (novaIdadeNumeric < 0) throw new IllegalArgumentException();
+                        break;
+                    } catch (NumberFormatException e) {
+                        System.out.print("POR FAVOR, INFORME UM NÚMERO VÁLIDO: ");
+                        novaIdade = input.nextLine();
+                    } catch (IllegalArgumentException e) {
+                        System.out.print("POR FAVOR, INFORME UM NÚMERO VÁLIDO: ");
+                        novaIdade = input.nextLine();
+                    }
+                }
+                p.setIdade(novaIdadeNumeric);
+            }
+
+            System.out.printf("PESO ATUAL: %s | NOVO VALOR: ", peso);
+            novoPeso = input.nextLine();
+            double novoPesoNumeric;
+            if (novoPeso.trim().isEmpty()) {
+                p.setPeso(peso);
+
+            } else {
+                while (true) {
+                    try {
+                        novoPesoNumeric = Double.parseDouble(novoPeso.replace(",", "."));
+                        if (novoPesoNumeric < 0) throw new IllegalArgumentException();
+                        break;
+                    } catch (NumberFormatException e) {
+                        System.out.print("POR FAVOR, INFORME UM NÚMERO VÁLIDO: ");
+                        novoPeso = input.nextLine();
+                    } catch (IllegalArgumentException e) {
+                        System.out.print("POR FAVOR, INFORME UM NÚMERO VÁLIDO: ");
+                        novoPeso = input.nextLine();
+                    }
+                }
+                p.setPeso(novoPesoNumeric);
+            }
+
+            System.out.printf("RACA ATUAL: %s | NOVO VALOR: ", raca);
+            novaRaca = input.nextLine();
+            if (novaRaca.trim().isEmpty()) {
+                p.setRaca(raca);
+            } else {
+                p.setRaca(novaRaca);
+            }
+        }
+
+        petDAO.updatePet(p);
     }
 
 }
