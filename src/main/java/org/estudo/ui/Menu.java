@@ -481,4 +481,26 @@ public class Menu {
         petDAO.updatePet(p);
     }
 
+    public static void handleDeletarPet() throws SQLException{
+        PetDAO petDAO = new PetDAO();
+        ResultSet resultFilter = petDAO.listFilteredPets(petsFiltradosMenu());
+        listAllPets(resultFilter);
+
+        System.out.print("INFORME O ID DO PET QUE DESEJA DELETAR: ");
+        String userInput = input.nextLine();
+        int userInputNumeric;
+
+        while (true) {
+            try {
+                userInputNumeric = Integer.parseInt(userInput);
+                break;
+            } catch (NumberFormatException e) {
+                System.out.print("INFORME UM NÚMERO VÁLIDO: ");
+                userInput = input.nextLine();
+            }
+        }
+
+        petDAO.deletePet(userInputNumeric);
+    }
+
 }

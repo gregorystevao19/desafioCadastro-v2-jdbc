@@ -58,7 +58,13 @@ public class Main {
                         System.out.println(e.getMessage());
                     }
                 }
-                case 5 -> System.out.println(" ");
+                case 5 -> {
+                    try {
+                        Menu.handleDeletarPet();
+                    } catch (SQLException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
                 case 6 -> start();
                 case 7 -> {
                     System.out.println("=================================");

@@ -122,4 +122,19 @@ public class PetDAO {
             System.out.println(e.getMessage());
         }
     }
+
+    public void deletePet(int id) {
+        final String SQL = "DELETE FROM pet WHERE id = ?";
+        try (Connection c = DbConnection.openConnection()) {
+            PreparedStatement s = c.prepareStatement(SQL);
+            s.setInt(1, id);
+            if (s.executeUpdate() > 0) {
+                System.out.println("PET DELETADO COM SUCESSO");
+            } else {
+                System.out.println("ERRO AO DELETAR O PET NO BANCO DE DADOS");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
